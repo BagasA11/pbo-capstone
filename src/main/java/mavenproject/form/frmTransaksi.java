@@ -45,7 +45,7 @@ public class frmTransaksi extends javax.swing.JFrame {
 private void open_db()
 { 
     try{
-        Koneksi kon = new Koneksi("localhost:8889","mamp1","1234","PBO_Latihan11");
+        Koneksi kon = new Koneksi("localhost","root","","PBO_Latihan11");
         Con = kon.getConnection();
         //System.out.println("Berhasil ");
     }catch (Exception e) {
@@ -82,7 +82,7 @@ private void open_db()
         cmdBatal = new javax.swing.JButton();
         cmdKeluar = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        xKode = new javax.swing.JTextField();
+        txtKode = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblJual = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -162,6 +162,12 @@ private void open_db()
             }
         });
 
+        txtKode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtKodeActionPerformed(evt);
+            }
+        });
+
         tblJual.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -218,9 +224,9 @@ private void open_db()
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(cmdTambah)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmdSimpan)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cmdSimpan)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cmdCetak)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cmdBatal)
@@ -253,7 +259,7 @@ private void open_db()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(jButton1)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(xKode, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(txtKode, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(cmbKd_Brg, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -294,7 +300,7 @@ private void open_db()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmdHapusItem)
                     .addComponent(jButton1)
-                    .addComponent(xKode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtKode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -387,7 +393,7 @@ cmbKd_Brg.setModel(model);
 //method baca barang setelah combo barang di klik
 private void detail_barang(String xkode) {            
     String sql = "SELECT * FROM barang WHERE kd_brg = ?";
-
+    PreparedStatement pstmt = null;
     try {
         pstmt = Con.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         pstmt.setString(1, xkode);
@@ -418,9 +424,9 @@ private void detail_barang(String xkode) {
 //method baca konsumen setelah combo konsumen di klik
 private void detail_konsumen(String xkode) {
 String sql = "SELECT * FROM konsumen WHERE kd_kons = ?";
-
+    PreparedStatement pstmt;
         try {
-            PreparedStatement pstmt = Con.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            pstmt = Con.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             pstmt.setString(1, xkode);
             ResultSet RsKons = pstmt.executeQuery();
 
@@ -527,7 +533,7 @@ private void simpan_ditabel()
     private void simpan_transaksi() {
         String sqlInsertJual = "INSERT INTO jual (no_jual, kd_kons, tgl_jual) VALUES (?, ?, ?)";
         String sqlInsertDjual = "INSERT INTO djual (no_jual, kd_brg, harga_jual, jml_jual) VALUES (?, ?, ?, ?)";
-
+        PreparedStatement pstmt = null;
         try {
             // Start a transaction
             Con.setAutoCommit(false);
@@ -614,46 +620,8 @@ private void format_tanggal()
     }//GEN-LAST:event_cmdTambahActionPerformed
 
     private void cmdSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSimpanActionPerformed
-        String tKode = txtKode.getText();
-        String tNama = txtNm_Brg.getText();
-        String tAlamat = txtAlamat.getText();
-        String tKota = txtKota.getText();
-        String tPos = txtPos.getText();
-        String tTelpon = txtTelpon.getText();
-        String tEmail = txtEmail.getText();
-
-        try {
-            if (edit == true) {
-                String sql = "UPDATE konsumen SET nm_kons=?, alm_kons=?, kota_kons=?, kd_pos=?, phone=?, email=? WHERE kd_kons=?";
-                PreparedStatement pstmt = Con.prepareStatement(sql);
-                pstmt.setString(1, tNama);
-                pstmt.setString(2, tAlamat);
-                pstmt.setString(3, tKota);
-                pstmt.setString(4, tPos);
-                pstmt.setString(5, tTelpon);
-                pstmt.setString(6, tEmail);
-                pstmt.setString(7, tKode);
-                pstmt.executeUpdate();
-            } else {
-                String sql = "INSERT INTO konsumen (kd_kons, nm_kons, alm_kons, kota_kons, kd_pos, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
-                PreparedStatement pstmt = Con.prepareStatement(sql);
-                pstmt.setString(1, tKode);
-                pstmt.setString(2, tNama);
-                pstmt.setString(3, tAlamat);
-                pstmt.setString(4, tKota);
-                pstmt.setString(5, tPos);
-                pstmt.setString(6, tTelpon);
-                pstmt.setString(7, tEmail);
-                pstmt.executeUpdate();
-            }
-
-            tblKons.setModel(new DefaultTableModel(dataTable, header));
-            baca_data();
-            aktif(false);
-            setTombol(true);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
+        simpan_transaksi();
+        inisialisasi_tabel();
     }//GEN-LAST:event_cmdSimpanActionPerformed
 
     private void cmdCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCetakActionPerformed
@@ -664,17 +632,17 @@ private void format_tanggal()
     }//GEN-LAST:event_cmdCetakActionPerformed
 
     private void cmdHapusItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdHapusItemActionPerformed
-        try{
-            String sql="delete from konsumen where kd_kons='" + txtKode.getText()+ "'";
-            stm.executeUpdate(sql);
-            baca_data();
-
-            edit=false; //set ulang edit agar form tidak masuk ke mode edit
-        }
-        catch(SQLException e)
-        {
-            JOptionPane.showMessageDialog(null, e);
-        }
+//        try{
+//            String sql="delete from konsumen where kd_kons='" + txtKode.getText()+ "'";
+//            stm.executeUpdate(sql);
+//            baca_data();
+//
+//            edit=false; //set ulang edit agar form tidak masuk ke mode edit
+//        }
+//        catch(SQLException e)
+//        {
+//            JOptionPane.showMessageDialog(null, e);
+//        }
     }//GEN-LAST:event_cmdHapusItemActionPerformed
 
     private void cmdBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdBatalActionPerformed
@@ -689,6 +657,10 @@ private void format_tanggal()
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtKodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtKodeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtKodeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -751,12 +723,12 @@ private void format_tanggal()
     private javax.swing.JTextField txtJml;
     private javax.swing.JTextField txtJual;
     private javax.swing.JTextField txtKembali;
+    private javax.swing.JTextField txtKode;
     private javax.swing.JTextField txtNm_Brg;
     private javax.swing.JTextField txtNm_Kons;
     private javax.swing.JTextField txtNoJual;
     private javax.swing.JSpinner txtTgl;
     private javax.swing.JTextField txtTot;
-    private javax.swing.JTextField xKode;
     private javax.swing.JTextField xtotal;
     // End of variables declaration//GEN-END:variables
 }

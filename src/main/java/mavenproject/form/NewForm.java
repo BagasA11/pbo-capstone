@@ -62,7 +62,7 @@ private void setField()
 private void open_db()
 { 
     try{
-        Koneksi kon = new Koneksi("localhost:8889","mamp1","1234","PBO_Latihan11");
+        Koneksi kon = new Koneksi("localhost","root","","PBO_Latihan11");
         Con = kon.getConnection();
         //System.out.println("Berhasil ");
     }catch (Exception e) {

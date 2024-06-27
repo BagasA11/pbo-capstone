@@ -15,9 +15,9 @@ import java.sql.SQLException;
 public class Koneksi {
     String url, usr, pwd, dbn;
     public Koneksi(String dbn){
-        this.url = "jdbc:mysql://localhost:8889/" + dbn;
-        this.usr = "mamp1"; // Sesuaikan dengan username db anda
-        this.pwd = "1234"; // Sesuaikan dengan password db anda
+        this.url = "jdbc:mysql://localhost/" + dbn;
+        this.usr = "root"; // Sesuaikan dengan username db anda
+        this.pwd = ""; // Sesuaikan dengan password db anda
     }
     
     public Koneksi(String host, String user, String pass,String dbn) {
